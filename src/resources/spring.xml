@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-init-method="myInit" default-destroy-method="myDestroy">
+	
+	<bean id="equilateral" class="com.troy.spring.test.Triangle">
+		<property name="type" value="Equilateral" />
+	</bean>
+
+	<bean id="isosceles" class="com.troy.spring.test.Triangle">
+		<constructor-arg value="Isosceles" />
+	</bean>
+
+	<bean id="triangle2" class="com.troy.spring.test.Triangle">
+		<constructor-arg value="55" type="int" />
+	</bean>
+
+	<bean id="triangle" class="com.troy.spring.test.Triangle">
+		<constructor-arg index="0" value="Isosceles" type="String" />
+		<constructor-arg index="1" value="35" type="int" />
+	</bean>
+
+	<bean id="zeroPoint" class="com.troy.spring.test.Point">
+		<property name="x" value="0" />
+		<property name="y" value="0" />
+	</bean>
+	
+	<bean id="new_triangle2" class="com.troy.spring.test.NewTriangle">
+		<property name="pointA" ref="zeroPoint" />
+		<property name="pointB">
+			<bean class="com.troy.spring.test.Point">
+				<property name="x" value="-20" />
+				<property name="y" value="0" />
+			</bean>
+		</property>
+		<property name="pointC">
+			<bean class="com.troy.spring.test.Point">
+				<property name="x" value="0" />
+				<property name="y" value="20" />
+			</bean>
+		</property>
+	</bean>
+	<alias name="new_triangle2" alias="triangle-alias" />
+
+	<bean id="newest_triangle" class="com.troy.spring.test.NewestTriangle">
+		<property name="points">
+			<list>
+				<ref bean="zeroPoint" />
+				<ref bean="pointB" />
+				<ref bean="pointC" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="pointA" class="com.troy.spring.test.Point">
+		<property name="x" value="${pointA.pointX}" />
+		<property name="y" value="${pointA.pointY}" />
+	</bean>
+
+	<bean id="pointB" class="com.troy.spring.test.Point">
+		<property name="x" value="0" />
+		<property name="y" value="-50" />
+	</bean>
+
+	<bean id="pointC" class="com.troy.spring.test.Point">
+		<property name="x" value="55" />
+		<property name="y" value="0" />
+	</bean>
+
+	<bean id="new_triangle" class="com.troy.spring.test.NewTriangle"
+		autowire="byName">
+
+	</bean>
+
+	<bean id="another_triangle" class="com.troy.spring.test.NewTriangle"
+		autowire="constructor">
+
+	</bean>
+
+
+	<bean id="parent_triangle" class="com.troy.spring.test.NewTriangle">
+		<property name="pointA" ref="zeroPoint"></property>
+	</bean>
+
+	<bean id="triangle1" class="com.troy.spring.test.NewTriangle"
+		parent="parent_triangle">
+		<property name="pointB" ref="pointB"></property>
+		<property name="pointC" ref="pointC"></property>
+	</bean>
+
+	<bean id="triangle3" class="com.troy.spring.test.NewTriangle"
+		parent="parent_triangle">
+		<property name="pointB" ref="pointB"></property>
+	</bean>
+
+	<alias name="newest_triangle2" alias="triangle-alias" />
+
+	<bean id="parent_newest" class="com.troy.spring.test.NewestTriangle"
+		abstract="true">
+		<property name="points">
+			<list>
+				<ref bean="pointA" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="newest_triangle2" class="com.troy.spring.test.NewestTriangle"
+		parent="parent_newest">
+		<property name="points">
+			<list merge="true">
+				<ref bean="pointB" />
+				<ref bean="pointC" />
+			</list>
+		</property>
+	</bean>
+	<bean id="test" class="com.troy.spring.test.Point">
+		<qualifier value="circleRelated" />
+		<property name="x" value="${pointA.pointX}" /> <!-- Use properties file to inject values -->
+		<property name="y" value="${pointA.pointY}" />
+	</bean>
+	<bean class="com.troy.spring.test.DisplayNameBeanPostProcessor" />
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> <!-- Property bean -->
+		<property name="locations" value="resources/points-config.properties"></property>
+	</bean>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" >
+		<property name="basenames">
+			<list>
+				<value>resources/application</value>
+			</list>
+		</property>
+	</bean>
+	<context:annotation-config />
+	<context:component-scan base-package="com.troy.spring.test" />
+
+
+	<alias name="newest_triangle2" alias="triangle-alias" />
+	<alias name="circle" alias="circle-alias" />
+	
+	
+</beans>
